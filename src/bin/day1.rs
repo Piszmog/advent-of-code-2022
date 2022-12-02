@@ -3,7 +3,7 @@ use std::io::{BufRead, BufReader};
 
 fn main() {
     let start = std::time::Instant::now();
-    let file = File::open("../../resources/day1.txt").unwrap();
+    let file = File::open("./resources/day1.txt").unwrap();
     let input = BufReader::new(file)
         .lines()
         .map(|line| line.unwrap())
