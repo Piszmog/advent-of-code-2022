@@ -17,6 +17,9 @@ fn main() {
     let part_1_result = part_1(&input);
     println!("Part 1: {}", part_1_result);
 
+    let part_2_result = part_2(&input);
+    println!("Part 2: {}", part_2_result);
+
     let elapsed = start.elapsed();
     println!("Time elapsed: {:?}", elapsed);
 }
@@ -25,8 +28,7 @@ fn part_1(input: &Vec<Round>) -> u32 {
     let mut total = 0;
     for round in input {
         let result = round.result();
-        total += result as u32;
-        total += round.user.points();
+        total += result as u32 + round.user.points();
     }
     total
 }
@@ -34,9 +36,9 @@ fn part_1(input: &Vec<Round>) -> u32 {
 fn part_2(input: &Vec<Round>) -> u32 {
     let mut total = 0;
     for round in input {
-        let result = round.result();
-        total += result as u32;
-        total += round.user.points();
+        let result = round.user.to_result();
+        let required_user_choice = round.required_user_choice();
+        total += result as u32 + required_user_choice.points();
     }
     total
 }
@@ -49,8 +51,8 @@ struct Round {
 impl Round {
     fn new(opponent: &str, user: &str) -> Round {
         Round {
-            opponent: Choice::to_enum(opponent),
-            user: Choice::to_enum(user),
+            opponent: Choice::from_str(opponent),
+            user: Choice::from_str(user),
         }
     }
 
@@ -67,6 +69,20 @@ impl Round {
             (Choice::Scissors, Choice::Scissors) => Result::Draw,
         }
     }
+
+    fn required_user_choice(&self) -> Choice {
+        match (&self.opponent, &self.user.to_result()) {
+            (Choice::Rock, Result::Win) => Choice::Paper,
+            (Choice::Rock, Result::Loss) => Choice::Scissors,
+            (Choice::Rock, Result::Draw) => Choice::Rock,
+            (Choice::Paper, Result::Win) => Choice::Scissors,
+            (Choice::Paper, Result::Loss) => Choice::Rock,
+            (Choice::Paper, Result::Draw) => Choice::Paper,
+            (Choice::Scissors, Result::Win) => Choice::Rock,
+            (Choice::Scissors, Result::Loss) => Choice::Paper,
+            (Choice::Scissors, Result::Draw) => Choice::Scissors,
+        }
+    }
 }
 
 enum Choice {
@@ -76,23 +92,7 @@ enum Choice {
 }
 
 impl Choice {
-    fn opponent(&self) -> &str {
-        match self {
-            Choice::Rock => "A",
-            Choice::Paper => "B",
-            Choice::Scissors => "C",
-        }
-    }
-
-    fn user(&self) -> &str {
-        match self {
-            Choice::Rock => "X",
-            Choice::Paper => "Y",
-            Choice::Scissors => "Z",
-        }
-    }
-
-    fn to_enum(val: &str) -> Choice {
+    fn from_str(val: &str) -> Choice {
         match val {
             "A" => Choice::Rock,
             "X" => Choice::Rock,
@@ -109,6 +109,14 @@ impl Choice {
             Choice::Rock => 1,
             Choice::Paper => 2,
             Choice::Scissors => 3,
+        }
+    }
+
+    fn to_result(&self) -> Result {
+        match self {
+            Choice::Rock => Result::Loss,
+            Choice::Paper => Result::Draw,
+            Choice::Scissors => Result::Win,
         }
     }
 }
