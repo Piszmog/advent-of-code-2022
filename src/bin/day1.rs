@@ -4,7 +4,6 @@ use std::io::{BufRead, BufReader};
 fn main() {
     let start = std::time::Instant::now();
     let file = File::open("../../resources/day1.txt").unwrap();
-    // read file line by line and store in a vector and convert to i8
     let input = BufReader::new(file)
         .lines()
         .map(|line| line.unwrap())
