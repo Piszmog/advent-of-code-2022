@@ -132,7 +132,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn part1() {
+    fn test_part_1() {
         let input = "A Y
 B X
 C Z".lines()
@@ -145,7 +145,7 @@ C Z".lines()
     }
 
     #[test]
-    fn part2() {
+    fn test_part_2() {
         let input = "A Y
 B X
 C Z".lines()
